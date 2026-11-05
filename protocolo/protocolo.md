@@ -80,7 +80,15 @@ _(a preencher após aplicação)_
 
 ## 7. Ameaças à Validade
 
-_(a preencher)_
+**Autosseleção:** Apenas devs com opinião formada sobre IA ou síndrome do impostor tendem a responder, enviesando os resultados. Mitigação: divulgar em canais variados e incentivar o repasse do link.
+
+**Desejabilidade social:** Respondentes podem minimizar sentimentos de impostor por vergonha. Mitigação: reforçar o anonimato no termo de consentimento.
+
+**Viés de não-resposta:** Devs que nunca usaram IA podem não se sentir contemplados e não responder. Mitigação: deixar claro no título que o survey é aberto a quem usa ou já usou IA.
+
+**Validade do construto:** Síndrome do impostor é um construto psicológico complexo; itens Likert podem não capturá-lo totalmente. Mitigação: usar escala validada (Clance IP Scale adaptada) e medir com múltiplos itens.
+
+**Viés de memória:** Percepções sobre o passado podem ser distorcidas. Mitigação: focar perguntas no estado atual do respondente.
 
 ---
 
