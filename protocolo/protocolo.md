@@ -46,7 +46,23 @@ _(a preencher após aplicação)_
 
 ## 5. Plano de Análise
 
-_(a preencher)_
+**Estatística descritiva:** média, mediana, desvio padrão e frequências para todos os itens.
+
+**Testes por questão de pesquisa:**
+
+| QP | Teste | Justificativa |
+|---|---|---|
+| QP1 | Correlação de Spearman | Frequência de uso e síndrome do impostor são variáveis ordinais |
+| QP2 | Mann-Whitney | Comparação entre dois grupos (menos vs mais experientes) |
+| QP3 | Kruskal-Wallis | Comparação entre 3+ grupos (tipo de uso da IA) |
+
+**Tamanho de efeito:** r de Pearson para Spearman, r = Z/√n para Mann-Whitney e Kruskal-Wallis.
+
+**Correção para múltiplas comparações:** Bonferroni quando múltiplos testes forem realizados sobre o mesmo construto.
+
+**Confiabilidade dos construtos:** Alfa de Cronbach para os itens que medem síndrome do impostor (valor aceitável ≥ 0,7).
+
+**Codificação de respostas abertas:** categorização temática por dois integrantes de forma independente, com consenso em caso de divergência.
 
 ---
 
