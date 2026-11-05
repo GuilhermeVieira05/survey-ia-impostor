@@ -20,7 +20,15 @@ Analisar o uso de assistentes de IA com o propósito de entender seu impacto em 
 
 ## 2. População e Amostragem
 
-_(a preencher)_
+**População-alvo:** Desenvolvedores de software brasileiros que utilizam ou já utilizaram assistentes de IA (GitHub Copilot, ChatGPT, Gemini ou similares) no trabalho ou estudos.
+
+**Origem dos contatos:** Conveniência e bola de neve — divulgação em grupos de WhatsApp, LinkedIn, Discord e comunidades de tecnologia. Os próprios respondentes são encorajados a repassar o link.
+
+**Estratégia de amostragem:** Não-probabilística por conveniência com bola de neve. Não é possível garantir aleatoriedade dada a ausência de um cadastro da população-alvo.
+
+**Tamanho pretendido:** Mínimo 50 respostas válidas.
+
+**Margem de erro:** Com n=50 e nível de confiança de 95%, a margem é de ±14 p.p. (pior caso, p=0,5).
 
 ---
 
