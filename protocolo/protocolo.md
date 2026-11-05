@@ -68,7 +68,13 @@ _(a preencher após aplicação)_
 
 ## 6. Ética e LGPD
 
-_(a preencher)_
+**Termo de consentimento:** Apresentado na primeira página do formulário, antes de qualquer pergunta. Informa o objetivo da pesquisa, que a participação é voluntária, que os dados são anônimos e como serão usados. O respondente só avança se aceitar.
+
+**Anonimização:** Nenhum dado identificável será coletado (sem nome, email ou CPF). O Google Forms será configurado para não coletar o email do respondente.
+
+**Armazenamento:** Os dados brutos serão armazenados no repositório do grupo e excluídos após a conclusão da disciplina. Apenas os integrantes do grupo terão acesso.
+
+**Uso dos dados:** Exclusivamente para fins acadêmicos no contexto desta disciplina.
 
 ---
 
