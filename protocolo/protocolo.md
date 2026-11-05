@@ -34,7 +34,7 @@ Analisar o uso de assistentes de IA com o propósito de entender seu impacto em 
 
 ## 3. Questionário com Rastreabilidade
 
-_(a preencher)_
+_(a preencher após pré-teste)_
 
 ---
 
@@ -94,4 +94,8 @@ _(a preencher após aplicação)_
 
 ## 8. Plano de Divulgação
 
-_(a preencher)_
+**Canais:** Grupos de WhatsApp de desenvolvimento e tecnologia, LinkedIn (posts pessoais dos integrantes) e Discord de comunidades de devs brasileiros.
+
+**Período de coleta:** 13/Nov a 20/Nov (7 dias).
+
+**Estratégia:** Na abertura da coleta todos os integrantes divulgam simultaneamente nos seus canais. No dia 16/Nov fazem um segundo post para alcançar quem não viu na primeira rodada.
