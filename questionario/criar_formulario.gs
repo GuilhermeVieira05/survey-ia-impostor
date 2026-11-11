@@ -1,6 +1,8 @@
 /**
- * Cria os formulários da pesquisa "IA e síndrome do impostor" (questionário v0.2).
+ * Cria os formulários da pesquisa "IA e síndrome do impostor" (questionário v1.0).
  * Fonte do texto: questionario/questionario.md (se mudar um, mude o outro).
+ * v1.0 = v0.2 + mudanças do pré-teste e do enunciado (opção de B3/B4 e item de atenção AT1).
+ * O formulário oficial já existente foi levado à v1.0 por um script de ajuste; este arquivo descreve a v1.0.
  *
  * COMO USAR
  *  1. Entre em https://script.google.com com a conta do grupo e crie um "Novo projeto".
@@ -16,7 +18,7 @@
  * Rode UMA vez. Rodar de novo cria formulários duplicados.
  */
 
-var VERSAO = '0.2';
+var VERSAO = '1.0';
 var EMAIL_GRUPO = 'carlosdybala.fig@gmail.com'; // e-mail de contato exibido no consentimento
 
 var TCLE =
@@ -48,7 +50,8 @@ var TAREFAS = [
   'Escrever testes automatizados',
   'Escrever ou revisar documentação (README e comentários)',
   'Buscar informação / tirar dúvidas conceituais (substituindo busca na web)',
-  'Entender ou explicar código existente'
+  'Entender ou explicar código existente',
+  'Criar protótipos de telas ou interfaces' // adicionada na v1.0 (apareceu em "Outro" no pré-teste); categoria: auxiliar
 ];
 
 var ITENS_LIS = [
@@ -56,6 +59,7 @@ var ITENS_LIS = [
   'C2. Eu costumo me sentir um(a) falso(a).',
   'C3. Tenho medo das pessoas que são importantes para mim, talvez descubram que não sou tão capaz como eles pensam que sou.',
   'C4. Em algumas situações me sinto como impostor(a).',
+  'AT1. Para mostrar que está lendo com atenção, marque a opção 4 nesta linha.', // item de atenção (v1.0); fora do escore M1
   'C5. Às vezes eu temo que outros descubram o quanto de conhecimento ou habilidade realmente me faltam.',
   'C6. Em algumas situações sinto-me como “um falso/impostor”; isto é, eu não sou tão genuíno(a) quanto as pessoas pensam que realmente eu sou.',
   'C7. Em algumas situações eu ajo como um impostor(a).'

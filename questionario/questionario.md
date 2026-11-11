@@ -1,4 +1,4 @@
-# Questionário — versão 0.2 (rascunho para pré-teste)
+# Questionário — versão 1.0 (congelada após o pré-teste)
 
 > Texto exato a ser colocado no formulário. Cada pergunta tem um **código** (ex.: `B1`) que é usado na
 > [matriz de rastreabilidade](rastreabilidade.md) e nos nomes das colunas do export.
@@ -14,6 +14,13 @@
 - O formulário **não coleta e-mail, nome nem qualquer identificador** (anonimato).
 
 **Mudanças da 0.1 para a 0.2:** escala do impostor definida (LIS, 7 itens, PT-BR); B4 ganhou a opção "Outra tarefa".
+
+**Mudanças da 0.2 para a 1.0 (11/Nov):**
+1. B3 e B4 ganharam a opção "Criar protótipos de telas ou interfaces" (categoria: auxiliar). Origem: um participante do
+   pré-teste escreveu "Fazer o protótipo de telas" em "Outro".
+2. Nova linha de **atenção** AT1 dentro da grade da Seção C ("Para mostrar que está lendo com atenção, marque a opção 4
+   nesta linha."). Origem: exigência do enunciado (pergunta de atenção), **não** do pré-teste; não foi respondida
+   pelos 3 participantes. Fica fora do escore M1.
 
 **Correção após teste do formulário (07/Nov):** as opções de B3 não podem ter vírgula, porque o Google Forms grava
 as marcadas numa só célula separadas por vírgula. Reescritas: "Gerar código novo (funções ou trechos de código)" e
@@ -93,6 +100,7 @@ condicional: B1 ≠ Nunca]** · nominal, múltipla escolha
 | Escrever ou revisar documentação (README e comentários) | auxiliar |
 | Buscar informação / tirar dúvidas conceituais (substituindo busca na web) | auxiliar |
 | Entender ou explicar código existente | auxiliar |
+| Criar protótipos de telas ou interfaces (v1.0) | auxiliar |
 | Outra: ______ (campo aberto) | auxiliar (revisar caso a caso e registrar em desvios se reclassificar) |
 
 **B4.** Dentre as tarefas marcadas, qual você mais realiza com IA? *(escolha uma)* **[obrigatória · condicional:
@@ -123,13 +131,15 @@ atribuição; este trabalho é acadêmico e sem fins lucrativos).
 | C2 | Eu costumo me sentir um(a) falso(a). |
 | C3 | Tenho medo das pessoas que são importantes para mim, talvez descubram que não sou tão capaz como eles pensam que sou. |
 | C4 | Em algumas situações me sinto como impostor(a). |
+| AT1 | **Item de atenção (não é da LIS):** "Para mostrar que está lendo com atenção, marque a opção 4 nesta linha." Fica entre C4 e C5. |
 | C5 | Às vezes eu temo que outros descubram o quanto de conhecimento ou habilidade realmente me faltam. |
 | C6 | Em algumas situações sinto-me como "um falso/impostor"; isto é, eu não sou tão genuíno(a) quanto as pessoas pensam que realmente eu sou. |
 | C7 | Em algumas situações eu ajo como um impostor(a). |
 
 Regras de pontuação:
 - Todos os itens são diretos (**nenhum item invertido** na versão publicada).
-- **Escore da síndrome do impostor (M1) = média dos 7 itens (faixa 1–5)**; maior = mais sentimentos de impostor.
+- **Atenção:** quem não marcar 4 em AT1 é excluído da análise (o número de excluídos é reportado). AT1 não entra em M1.
+- **Escore da síndrome do impostor (M1) = média dos 7 itens C1–C7 (faixa 1–5)**; maior = mais sentimentos de impostor.
   Itens obrigatórios, então não há dados faltantes.
 - Reportar **alfa de Cronbach** na nossa amostra (o artigo reporta α = 0,95 e ω = 0,95 em estudantes
   universitários; nossa população é diferente, por isso recalcular).
@@ -183,6 +193,6 @@ por canal)
 | 0 Consentimento | 1 | |
 | A Elegibilidade | 2 | |
 | B Uso de IA | 4 (1 se "Nunca") | |
-| C Impostor | 7 | grade 7 × 5 |
+| C Impostor | 7 + 1 de atenção | grade 8 × 5 |
 | D Perfil | 4 | 2 opcionais |
-| **Total** | **18** (15 se "Nunca") | |
+| **Total** | **19** (16 se "Nunca") | contando AT1 |

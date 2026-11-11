@@ -39,6 +39,7 @@ percebida, do ponto de vista de desenvolvedores de software.
 | B3 | Tarefas em que usa IA | nominal, múltipla | Caracterizar uso; composição dos grupos de sensibilidade | QP3 |
 | B4 | Tarefa mais frequente | nominal | **Variável independente** (M4) | QP3 |
 | C1…C7 | Itens da escala de impostor | Likert 1–5 | **Variável dependente** (M1) | QP1, QP2, QP3 |
+| AT1 | Item de atenção (marcar a opção 4) | nominal (acerto/erro) | Qualidade dos dados: identifica respostas automáticas ou descuidadas (exigência do enunciado) | todas (filtro de exclusão) |
 | D1 | Tempo de experiência | ordinal 5 faixas | **Variável moderadora** (M3) / controle | QP2, QP1 |
 | D2 | Faixa etária (opcional) | ordinal | Controle / descrição da amostra | todas (descritiva) |
 | D3 | Gênero (opcional) | nominal | Controle / descrição da amostra | todas (descritiva) |
@@ -46,14 +47,14 @@ percebida, do ponto de vista de desenvolvedores de software.
 
 ## 5. Regras de derivação de variáveis (para o dashboard)
 
-1. `M1` = média de C1…C7 (a LIS não tem itens invertidos).
-2. `M4`: B4 ∈ {gerar código, completar/refatorar, depurar, testes} → **core**; demais → **auxiliar**.
+1. `M1` = média de C1…C7 (a LIS não tem itens invertidos). AT1 **não** entra na média.
+2. `M4`: B4 ∈ {gerar código, completar/refatorar, depurar, testes} → **core**; demais (inclui "Criar protótipos de telas ou interfaces" e "Outra tarefa") → **auxiliar**.
 3. Grupo de sensibilidade (QP3): marcou só opções core em B3 → "só core"; só auxiliares → "só auxiliar"; ambos → "misto".
 4. Não usuários (B1 = 0) entram em QP1 e QP2 (B1 = 0), mas **ficam fora** de QP3.
 5. Quem responde "Não concordo" (Z1) ou "Não" em A1/A2 chega a uma tela final e precisa clicar em **Enviar**:
    isso gera uma linha na planilha só com essas colunas preenchidas. Contar essas linhas como recusas/inelegíveis
    (reportar o número) e **excluí-las** da análise.
-   Descartes: Z1 ≠ sim, A1 ≠ sim, A2 ≠ sim; respostas duplicadas evidentes (mesmos valores em todos os campos
+   Descartes: Z1 ≠ sim, A1 ≠ sim, A2 ≠ sim, **AT1 ≠ 4 (falhou no item de atenção)**; respostas duplicadas evidentes (mesmos valores em todos os campos
    e timestamps colados). Todo descarte entra no log de desvios/tratamento de dados.
 
 ## 6. Pontos a combinar com o grupo

@@ -43,12 +43,12 @@ Responsável: Carlos (montagem e pré-teste).
 - [x] Fluxo testado no formulário de pré-teste (07/Nov, desktop): consentimento "Não", A1 "Não", A2 "Não",
       B1 "Nunca usei" (pula B2–B4) e B1 com uso (B2–B4 + escala + perfil). Todos gravaram certo na planilha,
       sem coluna de e-mail. Oficial confirmado **fechado**.
-- [ ] Testar no celular
-- [ ] **Apagar as 5 respostas de teste** da planilha do pré-teste e do próprio formulário (Respostas → ⋮ → Excluir
-      todas as respostas) antes de mandar o link às pessoas do pré-teste
+- [x] Testar no celular (pré-teste de 11/Nov foi respondido em computador e celular)
+- [x] Respostas de teste apagadas antes do pré-teste
 - [ ] Revisão do grupo
-- [ ] Pré-teste com 3–5 pessoas de fora (ver [pretest.md](pretest.md))
-- [ ] Mudanças aplicadas no formulário **e** no `.gs`/`questionario.md`; versão `1.0` congelada
+- [x] Pré-teste com 3 pessoas de fora (11/Nov), ver [pretest.md](pretest.md)
+- [x] Mudanças aplicadas no formulário oficial **e** no `.gs`/`questionario.md`; versão `1.0` congelada (11/Nov):
+      opção de B3/B4 "Criar protótipos de telas ou interfaces" e item de atenção AT1
 - [ ] Cópia do formulário de pré-teste desativada (Respostas → desligar "Aceitando respostas")
 - [ ] Link do oficial passado ao Mateus (12/Nov)
 - [ ] Depois da entrega de 13/Nov: abrir o oficial
