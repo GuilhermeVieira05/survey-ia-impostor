@@ -6,12 +6,19 @@ margem de erro. Nenhum número é digitado à mão.
 
 ## Como rodar
 
+Da raiz do repositório (é onde fica `.streamlit/config.toml`, com o tema):
+
 ```bash
-cd dashboard
-uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements.txt
-# ou: python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-.venv/bin/streamlit run app.py
+uv venv --python 3.12 dashboard/.venv && uv pip install --python dashboard/.venv/bin/python -r dashboard/requirements.txt
+# ou: python3 -m venv dashboard/.venv && dashboard/.venv/bin/pip install -r dashboard/requirements.txt
+dashboard/.venv/bin/streamlit run dashboard/app.py
 ```
+
+## Publicação (Streamlit Community Cloud)
+
+Em https://share.streamlit.io → **Create app** → repositório `GuilhermeVieira05/survey-ia-impostor`, branch `main`,
+arquivo `dashboard/app.py`; em *Advanced settings*, Python 3.12. O app lê o CSV que está em `dados/` no GitHub:
+para atualizar os dados publicados, faça commit do novo export.
 
 Abre em http://localhost:8501. Para atualizar os dados, baixe de novo o CSV do Forms para `dados/` e recarregue a página.
 

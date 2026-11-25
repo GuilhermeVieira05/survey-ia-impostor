@@ -1,6 +1,6 @@
 """Dashboard do survey "IA e síndrome do impostor" (Parte 2).
 
-Executar a partir desta pasta:  .venv/bin/streamlit run app.py
+Executar da raiz do repositório:  dashboard/.venv/bin/streamlit run dashboard/app.py
 Lê o CSV bruto exportado do Google Forms em ../dados/ a cada carregamento.
 """
 
