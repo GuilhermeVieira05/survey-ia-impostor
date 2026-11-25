@@ -470,10 +470,10 @@ def pagina_metodologia():
         kap = an.kappa_cohen(outros.get("codificador_A", pd.Series(dtype=str)),
                              outros.get("codificador_B", pd.Series(dtype=str)))
         st.markdown(f"κ de Cohen entre os dois codificadores: **{num(kap)}**" if not np.isnan(kap)
-                    else "κ de Cohen: aguardando a codificação independente em `dados/codificacao_outro.csv`.")
+                    else "κ de Cohen não calculado: só um codificador preencheu `dados/codificacao_outro.csv` (desvio D12).")
     st.dataframe(outros.rename(columns={"linha_csv": "Linha do CSV"}), hide_index=True, width="stretch")
-    st.caption("Regra do protocolo: “Outro” conta como auxiliar; duas pessoas codificam de forma independente "
-               "(core/auxiliar + tema) e divergências vão a consenso com uma terceira.")
+    st.caption("A coluna “consenso” define se o “Outro” conta como core ou auxiliar em M4 e nos grupos de B3. "
+               "Sem codificação, “Outro” conta como auxiliar (regra do protocolo).")
 
     st.subheader("Como cada variável foi derivada")
     st.dataframe(pd.DataFrame([
@@ -482,8 +482,8 @@ def pagina_metodologia():
         {"Métrica": "M2' · Tempo de uso (sensib.)", "Origem": "B2", "Regra": "não usa = 0; < 6 meses = 1 … > 2 anos = 4", "Escala": "ordinal"},
         {"Métrica": "M2'' · Amplitude (sensib.)", "Origem": "B3", "Regra": "nº de tarefas marcadas (inclui Outro)", "Escala": "razão"},
         {"Métrica": "M3 · Experiência", "Origem": "D1", "Regra": "5 faixas (0–4); corte de QP2: < 3 × ≥ 3 anos", "Escala": "ordinal"},
-        {"Métrica": "M4 · Tarefa predominante", "Origem": "B4", "Regra": "gerar, completar, depurar, testes = core; demais = auxiliar", "Escala": "nominal"},
-        {"Métrica": "Grupo B3 (sensib. QP3)", "Origem": "B3", "Regra": "só core / misto / só auxiliar (Outro = auxiliar)", "Escala": "nominal"},
+        {"Métrica": "M4 · Tarefa predominante", "Origem": "B4", "Regra": "gerar, completar, depurar, testes = core; demais = auxiliar; Outra = conforme codificação", "Escala": "nominal"},
+        {"Métrica": "Grupo B3 (sensib. QP3)", "Origem": "B3", "Regra": "só core / misto / só auxiliar (Outro conforme codificação)", "Escala": "nominal"},
     ]), hide_index=True, width="stretch")
 
     st.subheader("Testes e por que foram escolhidos")

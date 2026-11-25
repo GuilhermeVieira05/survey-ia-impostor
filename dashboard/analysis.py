@@ -176,9 +176,25 @@ MOTIVOS = {
 VALIDA = "Válida"
 
 
-def preparar(df: pd.DataFrame) -> pd.DataFrame:
-    """Aplica as regras de descarte do protocolo e deriva M1–M4."""
+def carregar_codificacao() -> dict[int, str]:
+    """Classificação de consenso (core/auxiliar) das respostas "Outro", por linha do CSV."""
+    if not ARQ_CODIFICACAO.exists():
+        return {}
+    cod = pd.read_csv(ARQ_CODIFICACAO, dtype=str, keep_default_na=False)
+    return {int(r.linha_csv): r.consenso.strip().lower()
+            for r in cod.itertuples() if r.linha_csv.strip() and r.consenso.strip()}
+
+
+def preparar(df: pd.DataFrame, codificacao: dict[int, str] | None = None) -> pd.DataFrame:
+    """Aplica as regras de descarte do protocolo e deriva M1–M4.
+
+    ``codificacao`` (linha do CSV -> "core"/"auxiliar") classifica o texto livre de
+    "Outro"; sem codificação, "Outro" conta como auxiliar (regra do protocolo).
+    """
     d = df.copy()
+    if codificacao is None:
+        codificacao = carregar_codificacao()
+    outro_core = d["linha_csv"].map(codificacao).eq("core")
     d["ts"] = _parse_timestamp(d["timestamp"])
     d["data"] = d["ts"].dt.date
     for c in ITENS_C + ["AT1"]:
@@ -225,8 +241,9 @@ def preparar(df: pd.DataFrame) -> pd.DataFrame:
     d["B3_lista"] = parsed.map(lambda t: t[0])
     d["B3_outro"] = parsed.map(lambda t: t[1])
     d["n_tarefas"] = d["B3_lista"].map(len) + (d["B3_outro"] != "").astype(int)
-    tem_core = d["B3_lista"].map(lambda l: any(t in TAREFAS_CORE for t in l))
-    tem_aux = d["B3_lista"].map(lambda l: any(t in TAREFAS_AUX for t in l)) | (d["B3_outro"] != "")
+    tem_outro = d["B3_outro"] != ""
+    tem_core = d["B3_lista"].map(lambda l: any(t in TAREFAS_CORE for t in l)) | (tem_outro & outro_core)
+    tem_aux = d["B3_lista"].map(lambda l: any(t in TAREFAS_AUX for t in l)) | (tem_outro & ~outro_core)
     d["B3_grupo"] = np.select(
         [~d["usa_ia"], tem_core & tem_aux, tem_core, tem_aux],
         [None, "Misto", "Só core", "Só auxiliar"],
@@ -236,7 +253,7 @@ def preparar(df: pd.DataFrame) -> pd.DataFrame:
     # M4: tarefa predominante (B4) em core × auxiliar.
     b4_outra = d["B4"].str.startswith("Outra tarefa")
     d["M4"] = np.select(
-        [d["B4"].isin(TAREFAS_CORE), d["B4"].isin(TAREFAS_AUX) | b4_outra],
+        [d["B4"].isin(TAREFAS_CORE) | (b4_outra & outro_core), d["B4"].isin(TAREFAS_AUX) | b4_outra],
         [CORE, AUX],
         default=None,
     )
