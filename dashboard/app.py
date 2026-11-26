@@ -83,9 +83,12 @@ with st.sidebar:
     n_iguais = int(VALIDAS["C_iguais"].sum())
     n_b4 = int((VALIDAS["B4_em_B3"] == False).sum())  # noqa: E712
     n_nunca = int((~VALIDAS["usa_ia"]).sum())
+    n_tardias = int(VALIDAS["apos_prazo"].sum())
     s_iguais = st.toggle(f"Excluir C1–C7 todos iguais ({n_iguais})")
     s_b4 = st.toggle(f"Excluir B4 fora de B3 ({n_b4})")
     s_nunca = st.toggle(f"Excluir quem nunca usou IA ({n_nunca})")
+    s_prazo = st.toggle(f"Excluir respostas após {an.FIM_PREVISTO:%d/%m} ({n_tardias})",
+                        help="Respostas recebidas depois do fim da prorrogação prevista no protocolo (desvio D2).")
 
 AMOSTRA = VALIDAS
 for col, sel in (("D1", f_d1), ("exp_grupo", f_exp), ("B1", f_b1), ("D2", f_d2), ("D3", f_d3), ("D4", f_d4)):
@@ -97,6 +100,8 @@ if s_b4:
     AMOSTRA = AMOSTRA[AMOSTRA["B4_em_B3"] != False]  # noqa: E712
 if s_nunca:
     AMOSTRA = AMOSTRA[AMOSTRA["usa_ia"]]
+if s_prazo:
+    AMOSTRA = AMOSTRA[~AMOSTRA["apos_prazo"]]
 FILTRADO = len(AMOSTRA) != len(VALIDAS)
 
 with st.sidebar:
@@ -267,7 +272,7 @@ def pagina_escala():
 
 
 def _linha_resumo(qp, hipotese, teste, n, estat, p, p_holm, efeito, magnitude, me):
-    return {"QP": qp, "Hipótese": hipotese, "Teste": teste, "n": n, "Estatística": estat, "p": fp(p),
+    return {"QP": qp, "Hipótese": hipotese, "Teste": teste, "n": str(n), "Estatística": estat, "p": fp(p),
             "p (Holm)": fp(p_holm), "Tamanho de efeito (IC 95%)": efeito, "Magnitude": magnitude,
             "Margem de erro": f"±{num(me, 1)} p.p.", "Decisão (α = 0,05, Holm)": decisao(p_holm)}
 
@@ -503,12 +508,15 @@ def pagina_metodologia():
     )
 
     st.subheader("Limitações")
+    n_val = len(VALIDAS)
+    rho_min = float(np.tanh((an.Z_95 + 0.8416212335729143) / np.sqrt(n_val - 3))) if n_val > 3 else np.nan
     st.markdown(
         "- **Autosseleção e conveniência:** quase todos vieram de grupos de WhatsApp/Telegram e de colegas; não generalizar.\n"
         "- **Não resposta:** não há como saber quantas pessoas viram o convite e não responderam; reportamos recusas e inelegíveis.\n"
         "- **Desejabilidade social:** a escala pede autorrelato de sentimentos negativos; anonimato reforçado no consentimento.\n"
         "- **Pouca variação no uso de IA:** quase todos usam diariamente, o que limita QP1 e impede QP2 como planejado.\n"
-        "- **Poder baixo:** com n ≈ 45, só correlações de |ρ| ≳ 0,4 seriam detectadas com 80% de poder.\n"
+        f"- **Poder baixo:** com n = {n_val}, só correlações de |ρ| ≳ {num(rho_min)} seriam detectadas com 80% de poder "
+        "(α = 0,05 bilateral, aproximação de Fisher).\n"
         "- **Causalidade:** survey transversal — associação, não efeito da IA."
     )
 

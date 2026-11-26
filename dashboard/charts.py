@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import textwrap
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -66,21 +68,30 @@ def likert_divergente(df: pd.DataFrame, itens: list[str], rotulos: dict[str, str
                       textos: dict[str, str]) -> go.Figure:
     """Barras divergentes centradas no ponto neutro (3), que é dividido ao meio."""
     n = len(df)
-    pct = pd.DataFrame({c: df[c].value_counts(normalize=True).reindex(range(1, 6), fill_value=0) * 100
-                        for c in itens}).T
+    cont = pd.DataFrame({c: df[c].value_counts().reindex(range(1, 6), fill_value=0) for c in itens}).T
+    pct = cont.div(cont.sum(axis=1).replace(0, np.nan), axis=0).fillna(0) * 100
     y = [rotulos[c] for c in itens]
-    hover_txt = [textos.get(c, "") for c in itens]
     fig = go.Figure()
 
+    def _hover(c: str, destaque: int) -> str:
+        """Distribuição completa do item; o nível sob o cursor fica em negrito."""
+        linhas = [f"<b>{rotulos[c]}</b>"]
+        pergunta = textwrap.wrap(textos.get(c, ""), 55)
+        if pergunta:
+            linhas.append("<i>" + "<br>".join(pergunta) + "</i>")
+        for nivel in range(1, 6):
+            txt = f"{LIKERT_ROTULOS[nivel]}: {pct.at[c, nivel]:.0f}% ({cont.at[c, nivel]})".replace(".", ",")
+            linhas.append(f"<b>▸ {txt}</b>" if nivel == destaque else f"<span style='color:{TEXTO_2}'>  {txt}</span>")
+        linhas.append(f"<span style='color:{TEXTO_2}'>n = {int(cont.loc[c].sum())}</span>")
+        return "<br>".join(linhas)
+
     def _traco(nivel: int, valores, mostra: bool, nome_sufixo: str = ""):
-        reais = pct[nivel].values
         fig.add_trace(go.Bar(
             x=valores, y=y, orientation="h", name=LIKERT_ROTULOS[nivel] + nome_sufixo,
             legendgroup=str(nivel), showlegend=mostra, legendrank=nivel,
             marker=dict(color=LIKERT_CORES[nivel], line=dict(color=SUPERFICIE, width=1.5)),
-            customdata=np.column_stack([reais, hover_txt]),
-            hovertemplate=f"<b>%{{y}}</b><br>{LIKERT_ROTULOS[nivel]}: %{{customdata[0]:.1f}}%"
-                          f"<br><i>%{{customdata[1]}}</i><extra></extra>",
+            hovertext=[_hover(c, nivel) for c in itens],
+            hovertemplate="%{hovertext}<extra></extra>",
         ))
 
     # Lado esquerdo (negativo): metade do 3, depois 2 e 1, empilhando a partir do zero.

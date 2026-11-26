@@ -8,6 +8,7 @@ As regras seguem o protocolo (seção 5) e a matriz de rastreabilidade (seção 
 from __future__ import annotations
 
 import re
+from datetime import date
 from itertools import combinations
 from pathlib import Path
 
@@ -21,6 +22,7 @@ ARQ_DESVIOS = RAIZ / "protocolo" / "desvios.md"
 ARQ_CODIFICACAO = DIR_DADOS / "codificacao_outro.csv"
 
 ALFA = 0.05
+FIM_PREVISTO = date(2026, 11, 24)  # fim da prorrogação prevista no protocolo (seção 8)
 Z_95 = 1.959963984540054
 
 # --------------------------------------------------------------------------- #
@@ -197,6 +199,7 @@ def preparar(df: pd.DataFrame, codificacao: dict[int, str] | None = None) -> pd.
     outro_core = d["linha_csv"].map(codificacao).eq("core")
     d["ts"] = _parse_timestamp(d["timestamp"])
     d["data"] = d["ts"].dt.date
+    d["apos_prazo"] = d["data"] > FIM_PREVISTO
     for c in ITENS_C + ["AT1"]:
         d[c] = _likert(d[c])
 
