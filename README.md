@@ -8,7 +8,7 @@ Survey sobre a associação entre o uso de assistentes de IA e a síndrome do im
 
 ## Dashboard
 
-🔗 **[Acessar dashboard no Streamlit](https://survey-ia-impostor.streamlit.app)**
+🔗 **[Acessar dashboard no Streamlit](https://survey-ia-impostor-azkvkgrv9sb7fjiwbs3xyn.streamlit.app/)**
 
 ## Estrutura
 
