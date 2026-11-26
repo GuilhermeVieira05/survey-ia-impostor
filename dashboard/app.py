@@ -68,15 +68,37 @@ VALIDAS = TODOS[TODOS["valida"]].copy()
 # Barra lateral: filtros por segmento e análises de sensibilidade
 # --------------------------------------------------------------------------- #
 
+_CHAVES_MULTI = ("f_d1", "f_exp", "f_b1", "f_d2", "f_d3", "f_d4")
+_CHAVES_TOGGLE = ("s_iguais", "s_b4", "s_nunca", "s_prazo")
+
+GRUPOS_TAREFA = {
+    **{t: an.CORE for t in an.TAREFAS_CORE},
+    **{t: an.AUX for t in an.TAREFAS_AUX},
+    an.TAREFA_OUTRA: "Outra (codificada)",
+}
+CORES_TAREFA = {
+    an.CORE: ch.SERIES[0],
+    an.AUX: ch.SERIES[1],
+    "Outra (codificada)": ch.NEUTRO,
+}
+
+
+def _limpar_filtros():
+    for k in _CHAVES_MULTI:
+        st.session_state[k] = []
+    for k in _CHAVES_TOGGLE:
+        st.session_state[k] = False
+
+
 with st.sidebar:
     st.markdown("### Filtros por segmento")
     st.caption("Vazio = todos. Os filtros valem para todas as páginas, exceto a contagem de descartes.")
-    f_d1 = st.multiselect("Experiência (D1)", an.D1_ORDEM, placeholder="Todas")
-    f_exp = st.multiselect("Faixa de experiência (corte de QP2)", [an.EXP_MENOS, an.EXP_MAIS], placeholder="Todas")
-    f_b1 = st.multiselect("Frequência de uso de IA (B1)", an.B1_ORDEM, placeholder="Todas")
-    f_d2 = st.multiselect("Faixa etária (D2)", an.D2_ORDEM, placeholder="Todas")
-    f_d3 = st.multiselect("Gênero (D3)", an.D3_ORDEM, placeholder="Todos")
-    f_d4 = st.multiselect("Canal de origem (D4)", an.D4_ORDEM, placeholder="Todos")
+    f_d1 = st.multiselect("Experiência (D1)", an.D1_ORDEM, placeholder="Todas", key="f_d1")
+    f_exp = st.multiselect("Faixa de experiência (corte de QP2)", [an.EXP_MENOS, an.EXP_MAIS], placeholder="Todas", key="f_exp")
+    f_b1 = st.multiselect("Frequência de uso de IA (B1)", an.B1_ORDEM, placeholder="Todas", key="f_b1")
+    f_d2 = st.multiselect("Faixa etária (D2)", an.D2_ORDEM, placeholder="Todas", key="f_d2")
+    f_d3 = st.multiselect("Gênero (D3)", an.D3_ORDEM, placeholder="Todos", key="f_d3")
+    f_d4 = st.multiselect("Canal de origem (D4)", an.D4_ORDEM, placeholder="Todos", key="f_d4")
 
     st.markdown("### Sensibilidade")
     st.caption("Não previstas no protocolo, desligadas por padrão. Servem para ver se um resultado depende de poucas respostas.")
@@ -84,11 +106,12 @@ with st.sidebar:
     n_b4 = int((VALIDAS["B4_em_B3"] == False).sum())  # noqa: E712
     n_nunca = int((~VALIDAS["usa_ia"]).sum())
     n_tardias = int(VALIDAS["apos_prazo"].sum())
-    s_iguais = st.toggle(f"Excluir C1–C7 todos iguais ({n_iguais})")
-    s_b4 = st.toggle(f"Excluir B4 fora de B3 ({n_b4})")
-    s_nunca = st.toggle(f"Excluir quem nunca usou IA ({n_nunca})")
+    s_iguais = st.toggle(f"Excluir C1–C7 todos iguais ({n_iguais})", key="s_iguais")
+    s_b4 = st.toggle(f"Excluir B4 fora de B3 ({n_b4})", key="s_b4")
+    s_nunca = st.toggle(f"Excluir quem nunca usou IA ({n_nunca})", key="s_nunca")
     s_prazo = st.toggle(f"Excluir respostas após {an.FIM_PREVISTO:%d/%m} ({n_tardias})",
-                        help="Respostas recebidas depois do fim da prorrogação prevista no protocolo (desvio D2).")
+                        help="Respostas recebidas depois do fim da prorrogação prevista no protocolo (desvio D2).",
+                        key="s_prazo")
 
 AMOSTRA = VALIDAS
 for col, sel in (("D1", f_d1), ("exp_grupo", f_exp), ("B1", f_b1), ("D2", f_d2), ("D3", f_d3), ("D4", f_d4)):
@@ -107,6 +130,7 @@ FILTRADO = len(AMOSTRA) != len(VALIDAS)
 with st.sidebar:
     st.divider()
     st.metric("Respostas analisadas", f"{len(AMOSTRA)} de {len(VALIDAS)}")
+    st.button("Limpar filtros", on_click=_limpar_filtros, disabled=not FILTRADO, width="stretch")
     st.caption(f"Fonte: `dados/{caminho.name}`  \nAtualizado em {datetime.fromtimestamp(mtime):%d/%m/%Y %H:%M}")
 
 
@@ -148,6 +172,66 @@ def calcular_qps(d: pd.DataFrame) -> dict:
     return r
 
 
+def _render_principais_achados(d: pd.DataFrame, r: dict, mostrar_link: bool = False):
+    """Resumo em linguagem direta das respostas a QP1–QP3, sempre calculado dos dados."""
+    qp1, qp2, qp3 = r["qp1"], r["qp2"], r["qp3"]
+    p1_h, p2_h, p3_h = r["holm"]
+
+    # QP1
+    if np.isnan(qp1["p"]):
+        t1, s1 = "Não testável", "Sem variação suficiente em B1 ou M1 para calcular a correlação."
+    elif p1_h < an.ALFA:
+        direcao = "negativa" if qp1["rho"] < 0 else "positiva"
+        t1 = f"Associação {direcao} (p Holm = {fp(p1_h)})"
+        s1 = (f"Correlação {an.classe_correlacao(qp1['rho'])} (ρ = {num(qp1['rho'])}; IC 95% {ic(qp1['ic'])}) "
+              f"entre frequência de uso de IA e M1 (n = {qp1['n']}).")
+    else:
+        t1 = f"Sem evidência (p Holm = {fp(p1_h)})"
+        s1 = (f"Não houve evidência de associação entre frequência de uso de IA e impostor "
+              f"(ρ = {num(qp1['rho'])}; IC 95% {ic(qp1['ic'])}; n = {qp1['n']}).")
+
+    # QP2
+    if np.isnan(qp2["p"]):
+        g_const = [k for k, v in r["qp2_grupos"].items() if v["aviso"]]
+        detalhe = f"B1 sem variação suficiente em {', '.join(g_const)}" if g_const else "amostra insuficiente nos grupos"
+        t2 = "Não testável"
+        s2 = f"O teste previsto não pôde ser calculado ({detalhe}); ver alternativa exploratória com B2."
+    elif p2_h < an.ALFA:
+        t2 = f"Diferença entre faixas (p Holm = {fp(p2_h)})"
+        s2 = f"A correlação B1 × M1 diferiu entre < 3 e ≥ 3 anos (Δρ = {num(qp2['delta'])}; IC 95% {ic(qp2['ic'])})."
+    else:
+        t2 = f"Sem evidência (p Holm = {fp(p2_h)})"
+        s2 = f"Não houve diferença significativa da relação entre < 3 e ≥ 3 anos (Δρ = {num(qp2['delta'])})."
+
+    # QP3
+    if np.isnan(qp3["p"]):
+        t3, s3 = "Não testável", "Grupo core ou auxiliar com menos de 2 respostas nesta seleção."
+    elif p3_h < an.ALFA:
+        maior = "core" if qp3["rbc"] > 0 else "auxiliar"
+        t3 = f"Diferença entre grupos (p Holm = {fp(p3_h)})"
+        s3 = (f"M1 maior no grupo {maior} (r = {num(qp3['r'])}, {an.classe_correlacao(qp3['r'])}; "
+              f"δ de Cliff = {num(qp3['rbc'])}; n = {qp3['n1'] + qp3['n2']}).")
+    else:
+        t3 = f"Sem evidência (p Holm = {fp(p3_h)})"
+        s3 = (f"Sem diferença significativa de M1 entre uso predominante core e auxiliar "
+              f"(r = {num(qp3['r'])}; δ de Cliff = {num(qp3['rbc'])}; n = {qp3['n1'] + qp3['n2']}).")
+
+    cols = st.columns(3)
+    cards = [
+        ("QP1 · Frequência de IA × impostor", t1, s1),
+        ("QP2 · Efeito da experiência", t2, s2),
+        ("QP3 · Tarefas core × auxiliar", t3, s3),
+    ]
+    for col, (titulo, status, texto) in zip(cols, cards):
+        with col:
+            with st.container(border=True):
+                st.caption(titulo)
+                st.markdown(f"**{status}**")
+                st.write(texto)
+    if mostrar_link:
+        st.page_link(PG_QPS, label="Ver testes completos, sensibilidade e análises exploratórias →", icon="🧪")
+
+
 # --------------------------------------------------------------------------- #
 # Páginas
 # --------------------------------------------------------------------------- #
@@ -167,6 +251,9 @@ def pagina_perfil():
               delta_color="normal")
     c4.metric("Margem de erro (95%, p = 0,5)", f"±{num(an.margem_erro(n_validas), 1)} p.p.",
               help="e = 1,96 × √(p(1 − p)/n). Indicativa: a amostra não é probabilística.")
+
+    st.subheader("Principais achados (amostra completa)")
+    _render_principais_achados(VALIDAS, calcular_qps(VALIDAS), mostrar_link=True)
 
     st.subheader("Descartes e motivos")
     cont = TODOS["motivo"].value_counts()
@@ -220,10 +307,12 @@ def pagina_perfil():
     marcadas = usuarios["B3_lista"].explode().dropna()
     marcadas = pd.concat([marcadas, pd.Series([an.TAREFA_OUTRA] * int((usuarios["B3_outro"] != "").sum()))])
     ordem_t = an.TAREFAS + [an.TAREFA_OUTRA]
-    st.plotly_chart(ch.barras_categoria(marcadas, ordem_t, base=len(usuarios)), width="stretch")
+    st.plotly_chart(ch.barras_categoria(marcadas, ordem_t, base=len(usuarios),
+                                        grupos=GRUPOS_TAREFA, cores_grupo=CORES_TAREFA), width="stretch")
     st.markdown(f"**Tarefa que mais realiza com IA (B4) → M4**")
     b4 = usuarios["B4"].where(~usuarios["B4"].str.startswith("Outra tarefa"), an.TAREFA_OUTRA)
-    st.plotly_chart(ch.barras_categoria(b4, ordem_t), width="stretch")
+    st.plotly_chart(ch.barras_categoria(b4, ordem_t, grupos=GRUPOS_TAREFA, cores_grupo=CORES_TAREFA),
+                    width="stretch")
     m4 = usuarios["M4"].value_counts()
     st.caption(f"Core (gerar, completar, depurar, testes): {m4.get(an.CORE, 0)} · "
                f"Auxiliar (documentação, busca, entender código, protótipos, outra): {m4.get(an.AUX, 0)}.")
@@ -284,6 +373,9 @@ def pagina_qps():
     r = calcular_qps(d)
     qp1, qp2, qp3 = r["qp1"], r["qp2"], r["qp3"]
     g = r["qp2_grupos"]
+
+    st.subheader("Principais achados")
+    _render_principais_achados(d, r)
 
     st.subheader("Resumo dos testes confirmatórios")
     linhas = [
@@ -539,11 +631,11 @@ def pagina_dados():
         st.dataframe(pd.DataFrame(list(TEXTOS.items()), columns=["Código", "Pergunta"]), hide_index=True, width="stretch")
 
 
-paginas = st.navigation([
-    st.Page(pagina_perfil, title="Perfil da amostra", icon="👥", url_path="perfil", default=True),
-    st.Page(pagina_escala, title="Escala do impostor", icon="📏", url_path="escala"),
-    st.Page(pagina_qps, title="Questões de pesquisa", icon="🧪", url_path="questoes"),
-    st.Page(pagina_metodologia, title="Metodologia e desvios", icon="📝", url_path="metodologia"),
-    st.Page(pagina_dados, title="Dados brutos", icon="🗂️", url_path="dados"),
-])
+PG_PERFIL = st.Page(pagina_perfil, title="Perfil da amostra", icon="👥", url_path="perfil", default=True)
+PG_ESCALA = st.Page(pagina_escala, title="Escala do impostor", icon="📏", url_path="escala")
+PG_QPS = st.Page(pagina_qps, title="Questões de pesquisa", icon="🧪", url_path="questoes")
+PG_METODOLOGIA = st.Page(pagina_metodologia, title="Metodologia e desvios", icon="📝", url_path="metodologia")
+PG_DADOS = st.Page(pagina_dados, title="Dados brutos", icon="🗂️", url_path="dados")
+
+paginas = st.navigation([PG_PERFIL, PG_ESCALA, PG_QPS, PG_METODOLOGIA, PG_DADOS])
 paginas.run()
